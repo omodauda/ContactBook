@@ -3,14 +3,13 @@ import React from 'react'
 import styles from './styles'
 import { RootStackScreenProps } from '~types'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import CustomHeader from '~components/CustomHeader'
 
 const ContactsList = ({}: RootStackScreenProps<'ContactsList'>) => {
   return (
-    <SafeAreaView>
-      <View style={[styles.header]}>
-        <Text>Contacts</Text>
-        <View />
-      </View>
+    <SafeAreaView style={styles.screen}>
+      <CustomHeader />
+      
     </SafeAreaView>
   )
 }

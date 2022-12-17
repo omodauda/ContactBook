@@ -14,7 +14,10 @@ export default function Screens() {
         headerShown: false
       }}
     >
-      <Stack.Screen name="ContactsList" component={ContactsList} />
+      <Stack.Screen
+        name="ContactsList"
+        component={ContactsList}
+      />
     </Stack.Navigator>
   )
 }

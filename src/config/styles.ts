@@ -24,7 +24,9 @@ const fontStyle = {
 }
 
 const colors = {
-  background: '#FFFFFF'
+  background: '#FFFFFF',
+  black: '#000000',
+  gray: '#6E7191'
 }
 
 export {

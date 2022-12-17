@@ -23,4 +23,11 @@ const fontStyle = {
   }
 }
 
-export default fontStyle;
+const colors = {
+  background: '#FFFFFF'
+}
+
+export {
+  fontStyle,
+  colors
+};

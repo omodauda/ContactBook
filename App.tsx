@@ -1,4 +1,4 @@
-import React, {type PropsWithChildren} from 'react';
+import React from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -9,17 +9,21 @@ const App = () => {
 
   return (
     <SafeAreaView style={styles.screen}>
-      <Text>ContactBook</Text>
+      <Text style={styles.title}>ContactBook</Text>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   screen: {
-  flex: 1,
-  justifyContent: 'center',
-  alignItems: 'center',
- }
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  title: {
+    fontSize: 35,
+    fontFamily: 'GeneralSans-Bold',
+  },
 });
 
 export default App;

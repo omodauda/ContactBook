@@ -1,18 +1,16 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import AvatarCard from './AvatarCard'
-import {fontStyle} from '~config/styles'
+import {colors, fontStyle} from '~config/styles'
 import Profile from '../../assets/svg/profile.svg'
-import { wp } from '~config'
+import { hp, wp } from '~config'
 
 
 const CustomHeader = () => {
   return (
     <View style={[styles.header]}>
-        <AvatarCard style={styles.avatar}>
-          <Profile />
-        </AvatarCard>
-        <Text style={[fontStyle.titleBold]}>Contacts</Text>
+        <Profile />
+        <Text style={[fontStyle.titleBold, styles.title]}>Contacts</Text>
         <View />
       </View>
   )
@@ -23,12 +21,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: wp(16)
+    paddingHorizontal: wp(16),
+    paddingVertical: hp(20)
   },
   avatar: {
     width: wp(40),
     height: wp(40),
     // backgroundColor: 'gray'
+  },
+  title: {
+    color: colors.black
   }
 })
 

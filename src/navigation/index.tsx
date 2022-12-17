@@ -4,6 +4,7 @@ import { RootStackParamList } from "~types";
 
 // Screens
 import ContactsList from "~screens/ContactsList";
+import Contact from "~screens/Contact";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -17,6 +18,10 @@ export default function Screens() {
       <Stack.Screen
         name="ContactsList"
         component={ContactsList}
+      />
+      <Stack.Screen
+        name="Contact"
+        component={Contact}
       />
     </Stack.Navigator>
   )

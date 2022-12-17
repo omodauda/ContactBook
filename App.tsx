@@ -1,29 +1,16 @@
 import React from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  Text,
-} from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { NavigationContainer } from '@react-navigation/native';
+import Screens from '~navigation';
 
 const App = () => {
-
   return (
-    <SafeAreaView style={styles.screen}>
-      <Text style={styles.title}>ContactBook</Text>
-    </SafeAreaView>
+    <SafeAreaProvider>
+      <NavigationContainer>
+        <Screens />
+      </NavigationContainer>
+    </SafeAreaProvider>
   );
 };
-
-const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: 35,
-    fontFamily: 'GeneralSans-Bold',
-  },
-});
 
 export default App;

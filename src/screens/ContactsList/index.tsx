@@ -9,7 +9,7 @@ import AvatarCard from '~components/AvatarCard'
 import { fontStyle } from '~config/styles'
 import { Contact } from '~intefaces/Contact'
 
-const ContactsList = ({ }: RootStackScreenProps<'ContactsList'>) => {
+const ContactsList = ({navigation}: RootStackScreenProps<'ContactsList'>) => {
   const [contacts, setContacts] = useState<any>()
 
   const requestContactPermission = async () => {
@@ -38,6 +38,7 @@ const ContactsList = ({ }: RootStackScreenProps<'ContactsList'>) => {
         id: index,
         displayName: c.displayName,
         phoneNumbers: c.phoneNumbers,
+        emailAddresses: c.emailAddresses,
       }
     })
     const sortedContacts = formattedContacts.sort((a, b) => a.displayName?.localeCompare(b.displayName))
@@ -48,13 +49,13 @@ const ContactsList = ({ }: RootStackScreenProps<'ContactsList'>) => {
     requestContactPermission()
   }, [])
 
-  // console.log('contacts', contacts[72])
+  // console.log('contacts', contacts[60])
 
   const RenderItem = ({item}: Contact) => {
     return (
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate('Contact', {contact: {item}})}>
         <View style={styles.contactView}>
-          <AvatarCard name={item.displayName} style={styles.avatar} />
+          <AvatarCard name={item.displayName} cardStyle={styles.avatar} />
           <View style={styles.contactDetails}>
             <Text style={[styles.name, fontStyle.bodyMedium]}>{item.displayName}</Text>
             <Text style={[styles.number, fontStyle.bodyRegular]}>{item.phoneNumbers[0].number}</Text>

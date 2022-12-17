@@ -1,18 +1,21 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { wp } from '~config';
+import { fontStyle, colors } from '~config/styles';
 
 interface Props{
-  children: any;
   style: object
+  name: string;
 }
 
-const AvatarCard: React.FC<Props> = ({children, style}) => {
+const AvatarCard: React.FC<Props> = ({ name, style }) => {
+  const names = name.split(' ')
+  const first = names[0].split('')[0].toUpperCase();
+  const second = names[1] !== undefined ? names[1].split('')[0].toUpperCase() : '';
+  const initials = `${first}${second}`
   return (
     <View style={[styles.card, style]}>
-      {
-        children
-      }
+      <Text style={[fontStyle.bodySmall, {color: colors.background}]}>{initials}</Text>
     </View>
   )
 }

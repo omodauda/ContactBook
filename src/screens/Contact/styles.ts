@@ -33,11 +33,15 @@ const styles = StyleSheet.create({
     color: colors.black
   },
   details: {
-    marginTop: hp(80)
+    marginTop: hp(30)
   },
   section: {
-    paddingHorizontal: wp(16),
-    marginVertical: hp(10)
+    marginHorizontal: wp(16),
+    marginVertical: hp(10),
+    borderWidth: 0.5,
+    padding: wp(8),
+    borderColor: colors.gray,
+    borderRadius: wp(8)
   },
   subSection: {
     marginVertical: hp(4)

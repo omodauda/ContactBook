@@ -5,14 +5,14 @@ import { fontStyle, colors } from '~config/styles';
 
 interface Props{
   cardStyle: object
-  name: string;
+  givenName: string;
+  familyName: string;
   nameStyle?: object;
 }
 
-const AvatarCard: React.FC<Props> = ({ name, cardStyle, nameStyle }) => {
-  const names = name.split(' ')
-  const first = names[0].split('')[0].toUpperCase();
-  const second = names[1] !== undefined ? names[1].split('')[0].toUpperCase() : '';
+const AvatarCard: React.FC<Props> = ({ givenName, familyName, cardStyle, nameStyle }) => {
+  const first = givenName.split('')[0].toUpperCase();
+  const second = familyName !== '' ? familyName.split('')[0].toUpperCase() : '';
   const initials = `${first}${second}`
   return (
     <View style={[styles.card, cardStyle]}>

@@ -7,24 +7,26 @@ import CustomHeader from '~components/CustomHeader'
 import Contacts, {requestPermission} from 'react-native-contacts'
 import AvatarCard from '~components/AvatarCard'
 import { fontStyle } from '~config/styles'
-import { Contact } from '~intefaces/Contact'
 
 const ContactsList = ({navigation}: RootStackScreenProps<'ContactsList'>) => {
   const [contacts, setContacts] = useState<any>()
 
   const requestContactPermission = async () => {
     try {
-      const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_CONTACTS, {
-        title: 'Contacts',
-        message: 'Contact Book requires contact permission',
-        buttonPositive: 'OK'
-      });
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        console.log('permission granted')
-        const _contacts = await getContacts();
-        setContacts(_contacts)
+      if (Platform.OS === 'android') {
+        const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_CONTACTS, {
+          title: 'Contacts',
+          message: 'Contact Book requires contact permission',
+          buttonPositive: 'OK'
+        });
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          console.log('permission granted')
+          await getContacts();
+        } else {
+          console.log('permission rejected')
+        }
       } else {
-        console.log('permission rejected')
+        await getContacts();
       }
     } catch (err) {
       console.warn(err)
@@ -33,16 +35,9 @@ const ContactsList = ({navigation}: RootStackScreenProps<'ContactsList'>) => {
 
   const getContacts = async () => {
     const contacts = await Contacts.getAll();
-    const formattedContacts = contacts.filter(c => c.displayName !== null).map((c, index) => {
-      return {
-        id: index,
-        displayName: c.displayName,
-        phoneNumbers: c.phoneNumbers,
-        emailAddresses: c.emailAddresses,
-      }
-    })
-    const sortedContacts = formattedContacts.sort((a, b) => a.displayName?.localeCompare(b.displayName))
-    return sortedContacts
+    const formattedContacts = contacts.filter(c => c.givenName !== null)
+    const sortedContacts = formattedContacts.sort((a, b) => a.givenName?.localeCompare(b.givenName))
+    setContacts(sortedContacts)
   }
 
   useEffect(() => {
@@ -51,13 +46,17 @@ const ContactsList = ({navigation}: RootStackScreenProps<'ContactsList'>) => {
 
   // console.log('contacts', contacts[60])
 
-  const RenderItem = ({item}: Contact) => {
+  const renderItem = ({ item }) => {
+    const name =
+      item.displayName ? item.displayName :
+        `${item.givenName} ${item.familyName}`;
+  
     return (
-      <TouchableOpacity onPress={() => navigation.navigate('Contact', {contact: {item}})}>
+      <TouchableOpacity onPress={() => navigation.navigate('Contact', {recordID: item.recordID})}>
         <View style={styles.contactView}>
-          <AvatarCard name={item.displayName} cardStyle={styles.avatar} />
+          <AvatarCard givenName={item.givenName} familyName={item.familyName} cardStyle={styles.avatar} />
           <View style={styles.contactDetails}>
-            <Text style={[styles.name, fontStyle.bodyMedium]}>{item.displayName}</Text>
+            <Text style={[styles.name, fontStyle.bodyMedium]}>{name}</Text>
             <Text style={[styles.number, fontStyle.bodyRegular]}>{item.phoneNumbers[0].number}</Text>
           </View>
         </View>
@@ -72,8 +71,8 @@ const ContactsList = ({navigation}: RootStackScreenProps<'ContactsList'>) => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.list}
         data={contacts}
-        keyExtractor={item => item.id}
-        renderItem={({item}) => <RenderItem item={item} />}
+        keyExtractor={item => item.recordID}
+        renderItem={renderItem}
       />
     </SafeAreaView>
   )

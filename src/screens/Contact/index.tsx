@@ -1,82 +1,105 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import { View, Text, ScrollView } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import styles from './styles'
 import Header from '~navigation/header'
 import { RootStackScreenProps } from '~types'
 import AvatarCard from '~components/AvatarCard'
-import {fontStyle } from '~config/styles'
+import { fontStyle } from '~config/styles'
+import Contacts, {Contact as IContact} from 'react-native-contacts';
+import PhoneCard from './PhoneCard'
+import EmailCard from './EmailCard'
+import AddressCard from './AddressCard'
 
 const Contact = ({
-    navigation, route: { params: { contact } }
+    navigation, route: { params: { recordID } }
 }: RootStackScreenProps<'Contact'>) => {
-  console.log(contact.item.emailAddresses)
-  const { item: { displayName, phoneNumbers, emailAddresses } } = contact;
-  const phone = phoneNumbers[0];
+  const [contact, setContact] = useState<IContact>()
+
+  const name =
+      contact?.displayName ? contact?.displayName :
+        `${contact?.givenName} ${contact?.familyName}`;
+
+  const getContactById = async (id: string) => {
+    const contact = await Contacts.getContactById(id)
+    setContact(contact)
+  }
+
+  useEffect(() => {
+    getContactById(recordID)
+  }, [recordID])
+
   return (
     <SafeAreaView style={styles.screen}>
       <Header navigation={navigation} />
-      <View style={styles.centered}>
-        <AvatarCard
-          name={displayName}
-          cardStyle={styles.avatar}
-          nameStyle={styles.avatarName}
-        />
-      </View>
-      <Text
-        style={[
-        fontStyle.bodyMedium,
-        styles.centeredText,
-        styles.name,
-        styles.label
-      ]}>
-        {displayName}
+      {
+        contact && (
+          <View style={styles.centered}>
+            <AvatarCard
+              givenName={contact.givenName}
+              familyName={contact.familyName}
+              cardStyle={styles.avatar}
+              nameStyle={styles.avatarName}
+            />
+          </View>
+        )
+      }
+      <Text style={[fontStyle.bodyMedium, styles.centeredText, styles.name, styles.label]}>
+        {name}
       </Text>
-      <Text
-        style={[
-          fontStyle.bodyRegular,
-          styles.label,
-          styles.centeredText
-        ]}>
-        {phoneNumbers[0].number}
+      <Text style={[fontStyle.bodyRegular, styles.label, styles.centeredText]}>
+        {contact?.phoneNumbers[0].number}
       </Text>
 
-      <View style={styles.details}>
+      <ScrollView showsVerticalScrollIndicator={false} style={styles.details}>
         <View style={[styles.section]}>
-          <Text style={[fontStyle.bodyBig, styles.label]}>Phone numbers</Text>
+          <Text style={[fontStyle.bodyBig, styles.label]}>Phone number</Text>
           {
-            phoneNumbers.map(phone => {
+            contact?.phoneNumbers.map((phone, index) => {
+              const {label, number } = phone;
               return (
-                <View style={styles.subSection}>
-                  <Text style={[fontStyle.bodyMedium, styles.label]}>{phone.label}</Text>
-                  <Text style={[fontStyle.bodyBig, styles.digits]}>{phone.number}</Text>
-                </View>
+                <PhoneCard key={index} label={label} number={number} />
               )
             })
           }
         </View>
         {
-          emailAddresses.length !== 0 && 
+          contact?.emailAddresses.length !== 0 && 
           <View style={styles.section}>
-              <Text style={[fontStyle.bodyBig, styles.label]}>Email Addresses</Text>
+              <Text style={[fontStyle.bodyBig, styles.label]}>Email Address</Text>
               {
-                emailAddresses.map((_email, index) => {
-                  const { label, email } = _email;
-                  return (
-                    <View key={index} style={styles.subSection}>
-                      <Text style={[fontStyle.bodyMedium, styles.label]}>{label}</Text>
-                      <Text style={[fontStyle.bodyBig, styles.digits]}>{email}</Text>
-                    </View>
-                  )
+                contact?.emailAddresses.map((_email, index) => {
+                  const { label, email} = _email;
+                  return <EmailCard key={index} label={label} email={email}  />
                 })
               }
           </View>
         }
-      </View>
+        {
+          contact?.postalAddresses.length !== 0 && (
+            <View style={styles.section}>
+              <Text style={[fontStyle.bodyBig, styles.label]}>Postal Address</Text>
+              {contact?.postalAddresses.map((address, index) => {
+                  const { label, street, city, state, postCode, country } = address;
+                  return (
+                    <AddressCard
+                      key={index}
+                      label={label}
+                      street={street}
+                      state={state}
+                      city={city}
+                      postCode={postCode}
+                      country={country}
+                    />
+                  )
+                })
+              }
+            </View>
+          )
+        }
+      </ScrollView>
     </SafeAreaView>
   )
 }
-
-
 
 export default Contact;

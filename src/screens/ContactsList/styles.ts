@@ -6,11 +6,14 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor: 'white',
-    paddingVertical: hp(15)
+    paddingVertical: hp(15),
+    paddingHorizontal: wp(16)
   },
   list: {
-    marginHorizontal: wp(16),
     paddingVertical: hp(16)
+  },
+  listContent: {
+    paddingBottom: hp(16)
   },
   contactView: {
     flexDirection: 'row',
@@ -35,6 +38,14 @@ const styles = StyleSheet.create({
   },
   number: {
     color: colors.gray
+  },
+  favView: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: hp(10)
+  },
+  favDetails: {
+    marginLeft: wp(10)
   }
 })
 

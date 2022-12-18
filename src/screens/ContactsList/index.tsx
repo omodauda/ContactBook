@@ -1,15 +1,19 @@
 import {Platform, Text, View, PermissionsAndroid, FlatList, TouchableOpacity } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import styles from './styles'
 import { RootStackScreenProps } from '~types'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import CustomHeader from '~components/CustomHeader'
 import Contacts, {requestPermission} from 'react-native-contacts'
-import AvatarCard from '~components/AvatarCard'
-import { fontStyle } from '~config/styles'
+import { colors, fontStyle } from '~config/styles'
+import { FavouriteContactContext } from '~context'
+import ContactCard from './ContactCard'
+import FavContact from './FavContact'
+import { List, Contact } from '~interface'
 
 const ContactsList = ({navigation}: RootStackScreenProps<'ContactsList'>) => {
-  const [contacts, setContacts] = useState<any>()
+  const [contacts, setContacts] = useState<Contact[]>()
+  const {favContact} = useContext(FavouriteContactContext)
 
   const requestContactPermission = async () => {
     try {
@@ -44,32 +48,41 @@ const ContactsList = ({navigation}: RootStackScreenProps<'ContactsList'>) => {
     requestContactPermission()
   }, [])
 
-  // console.log('contacts', contacts[60])
-
-  const renderItem = ({ item }) => {
-    const name =
-      item.displayName ? item.displayName :
-        `${item.givenName} ${item.familyName}`;
-  
+  const renderItem = ({ item }: List) => {
     return (
-      <TouchableOpacity onPress={() => navigation.navigate('Contact', {recordID: item.recordID})}>
-        <View style={styles.contactView}>
-          <AvatarCard givenName={item.givenName} familyName={item.familyName} cardStyle={styles.avatar} />
-          <View style={styles.contactDetails}>
-            <Text style={[styles.name, fontStyle.bodyMedium]}>{name}</Text>
-            <Text style={[styles.number, fontStyle.bodyRegular]}>{item.phoneNumbers[0].number}</Text>
-          </View>
-        </View>
-      </TouchableOpacity>
+      <ContactCard
+        recordID={item.recordID}
+        displayName={item.displayName}
+        givenName={item.givenName}
+        familyName={item.familyName}
+        phoneNumber={item.phoneNumbers[0].number}
+        navigation={navigation}
+      />
     )
   }
   
   return (
     <SafeAreaView style={styles.screen}>
       <CustomHeader />
+      {
+        favContact !== undefined && (
+          <View>
+            <Text style={[fontStyle.bodyMedium, { color: colors.black }]}>Favourite</Text>
+            <FavContact
+              recordID={favContact?.recordID}
+              displayName={favContact?.displayName}
+              givenName={favContact?.givenName}
+              familyName={favContact?.familyName}
+              phoneNumber={favContact?.phoneNumbers[0].number}
+              navigation={navigation}
+            />
+          </View>
+        )
+      }
       <FlatList
         showsVerticalScrollIndicator={false}
         style={styles.list}
+        contentContainerStyle={styles.listContent}
         data={contacts}
         keyExtractor={item => item.recordID}
         renderItem={renderItem}

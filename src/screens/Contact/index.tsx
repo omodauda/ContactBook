@@ -1,5 +1,5 @@
-import { View, Text, ScrollView } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { View, Text, ScrollView, TouchableOpacity } from 'react-native'
+import React, { useContext, useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import styles from './styles'
 import Header from '~navigation/header'
@@ -10,6 +10,9 @@ import Contacts, {Contact as IContact} from 'react-native-contacts';
 import PhoneCard from './PhoneCard'
 import EmailCard from './EmailCard'
 import AddressCard from './AddressCard'
+import { FavouriteContactContext } from '~context'
+import Favourite from '../../../assets/svg/favourite.svg'
+import IsFavourite from '../../../assets/svg/isFavourite.svg'
 
 const Contact = ({
     navigation, route: { params: { recordID } }
@@ -28,6 +31,23 @@ const Contact = ({
   useEffect(() => {
     getContactById(recordID)
   }, [recordID])
+
+  const { favContact, setFavContact } = useContext(FavouriteContactContext)
+
+  let isFav: boolean = false;
+  if (favContact === undefined) {
+    isFav = false
+  } else if (contact?.recordID === favContact?.recordID) {
+    isFav = true
+  }
+
+  const toggleFav = (contact: IContact) => {
+    if (isFav) {
+      setFavContact(undefined)
+    } else {
+      setFavContact(contact)
+    }
+  }
 
   return (
     <SafeAreaView style={styles.screen}>
@@ -50,6 +70,13 @@ const Contact = ({
       <Text style={[fontStyle.bodyRegular, styles.label, styles.centeredText]}>
         {contact?.phoneNumbers[0].number}
       </Text>
+
+      <TouchableOpacity
+        onPress={() => toggleFav(contact!)}
+        style={[styles.centered, styles.favBtn]}
+      >
+        {isFav ? <IsFavourite /> : <Favourite />}
+      </TouchableOpacity>
 
       <ScrollView showsVerticalScrollIndicator={false} style={styles.details}>
         <View style={[styles.section]}>

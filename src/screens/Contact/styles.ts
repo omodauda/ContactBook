@@ -32,6 +32,9 @@ const styles = StyleSheet.create({
   digits: {
     color: colors.black
   },
+  favBtn: {
+    marginTop: hp(8)
+  },
   details: {
     marginTop: hp(30)
   },

@@ -69,7 +69,7 @@ const ContactsList = ({navigation}: RootStackScreenProps<'ContactsList'>) => {
       <CustomHeader />
       <FlatList
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.list}
+        style={styles.list}
         data={contacts}
         keyExtractor={item => item.recordID}
         renderItem={renderItem}

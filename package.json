@@ -7,15 +7,23 @@
     "ios": "react-native run-ios",
     "start": "react-native start",
     "test": "jest",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "gradle:clean": "cd android && ./gradlew clean && cd ..",
+    "bundle:release": "cd android && ./gradlew clean && ./gradlew bundleRelease",
+    "release:prod": "npx react-native run-android --variant=release"
   },
   "dependencies": {
     "@react-navigation/native": "^6.1.1",
     "@react-navigation/native-stack": "^6.9.7",
     "react": "18.1.0",
     "react-native": "0.70.6",
+    "react-native-contacts": "^7.0.5",
+    "react-native-responsive-fontsize": "^0.5.1",
+    "react-native-responsive-screen": "^1.4.2",
     "react-native-safe-area-context": "^4.4.1",
-    "react-native-screens": "^3.18.2"
+    "react-native-screens": "^3.18.2",
+    "react-native-svg": "^13.6.0",
+    "react-native-svg-transformer": "^1.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

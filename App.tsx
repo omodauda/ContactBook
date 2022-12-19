@@ -1,29 +1,22 @@
-import React from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  Text,
-} from 'react-native';
+import React, { useMemo, useState } from 'react';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { NavigationContainer } from '@react-navigation/native';
+import Screens from '~navigation';
+import { FavouriteContactContext } from '~context';
 
 const App = () => {
+  const [favContact, setFavContact] = useState();
 
+  const value = useMemo(() => ({ favContact, setFavContact}), [favContact])
   return (
-    <SafeAreaView style={styles.screen}>
-      <Text style={styles.title}>ContactBook</Text>
-    </SafeAreaView>
+    <FavouriteContactContext.Provider value={value}>
+      <SafeAreaProvider>
+      <NavigationContainer>
+        <Screens />
+      </NavigationContainer>
+    </SafeAreaProvider>
+    </FavouriteContactContext.Provider>
   );
 };
-
-const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: 35,
-    fontFamily: 'GeneralSans-Bold',
-  },
-});
 
 export default App;

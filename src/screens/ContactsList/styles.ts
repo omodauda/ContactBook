@@ -9,12 +9,19 @@ const styles = StyleSheet.create({
     paddingVertical: hp(15),
     paddingHorizontal: wp(16)
   },
-  list: {
-    paddingVertical: hp(16)
+  sectionHeader: {
+    paddingHorizontal: 16,
+    marginTop: hp(10)
   },
-  listContent: {
-    paddingBottom: hp(16)
+  sectionHeaderText: {
+    color: colors.black
   },
+  // list: {
+  //   paddingVertical: hp(16)
+  // },
+  // listContent: {
+  //   paddingBottom: hp(16)
+  // },
   contactView: {
     flexDirection: 'row',
     alignItems: 'center',

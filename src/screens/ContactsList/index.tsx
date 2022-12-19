@@ -1,4 +1,4 @@
-import {Platform, Text, View, PermissionsAndroid, FlatList, TouchableOpacity, Alert } from 'react-native'
+import {Platform, Text, View, PermissionsAndroid, FlatList, TouchableOpacity, Alert, SectionList } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import styles from './styles'
 import { RootStackScreenProps } from '~types'
@@ -11,8 +11,12 @@ import ContactCard from './ContactCard'
 import FavContact from './FavContact'
 import { List, Contact } from '~interface'
 
+interface GroupedContact {
+  title: string; data: Contact[]
+}
+
 const ContactsList = ({navigation}: RootStackScreenProps<'ContactsList'>) => {
-  const [contacts, setContacts] = useState<Contact[]>()
+  const [contacts, setContacts] = useState<GroupedContact[]>()
   const {favContact} = useContext(FavouriteContactContext)
 
   const requestContactPermission = async () => {
@@ -58,11 +62,25 @@ const ContactsList = ({navigation}: RootStackScreenProps<'ContactsList'>) => {
     )
   }
 
+
   const getContacts = async () => {
     const contacts = await Contacts.getAll();
     const formattedContacts = contacts.filter(c => c.givenName !== null)
     const sortedContacts = formattedContacts.sort((a, b) => a.givenName?.localeCompare(b.givenName))
-    setContacts(sortedContacts)
+    // group contacts
+    let groupedContacts: GroupedContact[] = [];
+    sortedContacts.forEach(contact => {
+      const firstLetter = contact.givenName.split('')[0].toLowerCase()
+      const existingGroup = groupedContacts.some(g => g.title === firstLetter)
+      if (existingGroup) {
+        const groupData = groupedContacts.find(group => group.title === firstLetter)?.data;
+        groupData?.push(contact)
+      } else {
+        groupedContacts.push({ title: firstLetter, data: [contact] });
+      }
+    })
+    
+    setContacts(groupedContacts)
   }
 
   useEffect(() => {
@@ -100,14 +118,29 @@ const ContactsList = ({navigation}: RootStackScreenProps<'ContactsList'>) => {
           </View>
         )
       }
-      <FlatList
+      {/* <FlatList
         showsVerticalScrollIndicator={false}
         style={styles.list}
         contentContainerStyle={styles.listContent}
         data={contacts}
         keyExtractor={item => item.recordID}
         renderItem={renderItem}
+      /> */}
+      {
+        contacts !== undefined && <SectionList
+        sections={contacts}
+          keyExtractor={(item, index) => item.recordID}
+          showsVerticalScrollIndicator={false}
+        renderItem={renderItem}
+          renderSectionHeader={({ section: { title } }) => (
+          <View style={styles.sectionHeader}>
+            <Text style={[fontStyle.titleBold, styles.sectionHeaderText]}>
+              {title.toUpperCase()}
+            </Text>
+          </View>
+        )}
       />
+      }
     </SafeAreaView>
   )
 }

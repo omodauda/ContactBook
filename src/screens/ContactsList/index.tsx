@@ -1,10 +1,10 @@
-import {Platform, Text, View, PermissionsAndroid, FlatList, TouchableOpacity } from 'react-native'
+import {Platform, Text, View, PermissionsAndroid, FlatList, TouchableOpacity, Alert } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import styles from './styles'
 import { RootStackScreenProps } from '~types'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import CustomHeader from '~components/CustomHeader'
-import Contacts, {requestPermission} from 'react-native-contacts'
+import Contacts, {checkPermission} from 'react-native-contacts'
 import { colors, fontStyle } from '~config/styles'
 import { FavouriteContactContext } from '~context'
 import ContactCard from './ContactCard'
@@ -19,22 +19,43 @@ const ContactsList = ({navigation}: RootStackScreenProps<'ContactsList'>) => {
     try {
       if (Platform.OS === 'android') {
         const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_CONTACTS, {
-          title: 'Contacts',
-          message: 'Contact Book requires contact permission',
+          title: 'Permission required',
+          message: 'ContactBook requires contact read permission',
           buttonPositive: 'OK'
         });
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-          console.log('permission granted')
           await getContacts();
         } else {
-          console.log('permission rejected')
+          permissionAlert()
         }
+      } else if (Platform.OS === 'ios') {
+        const permission = await checkPermission();
+        if (permission === 'denied') {
+          permissionAlert()
+        }
+        await getContacts();
       } else {
         await getContacts();
       }
     } catch (err) {
-      console.warn(err)
+      // console.warn(err)
     }
+  }
+
+  const permissionAlert = () => {
+    const defaultMessage = 'Allow ContactBook access to contacts'
+    const androidMessage = 'settings > Apps > ContactBook > Permissions> Not Allowed > Contacts> Allow';
+    const iosMessage = 'settings > ContactBook > Allow Access > Contacts';
+    const message = 
+      Platform.OS === 'android' ? androidMessage :
+      Platform.OS === 'ios' ? iosMessage : defaultMessage;
+    
+    Alert.alert(
+      'Contact read permission required',
+      `Follow this steps to allow permission: ${message}`,
+      [],
+      {cancelable: false}
+    )
   }
 
   const getContacts = async () => {

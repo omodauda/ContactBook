@@ -84,6 +84,20 @@ project.ext.react = [
 
 apply from: "../../node_modules/react-native/react.gradle"
 
+def getPassword(String currentUser, String keyChain) {
+  def stdout = new ByteArrayOutputStream()
+  def stderr = new ByteArrayOutputStream()
+  exec {
+    commandLine 'security', '-q', 'find-generic-password', '-a', currentUser, '-s', keyChain, '-w'
+    standardOutput = stdout
+    errorOutput = stderr
+    ignoreExitValue true
+  }
+  //noinspection GroovyAssignabilityCheck
+      stdout.toString().trim()
+}
+
+def pass = getPassword("contactbook", "contactbook-key")
 /**
  * Set this to true to create two separate APKs instead of one:
  *   - An APK that only works on ARM devices
@@ -217,6 +231,14 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        release {
+            if (project.hasProperty('CONTACTBOOK_UPLOAD_STORE_FILE')) {
+                storeFile file(CONTACTBOOK_UPLOAD_STORE_FILE)
+                storePassword pass
+                keyAlias CONTACTBOOK_UPLOAD_KEY_ALIAS
+                keyPassword pass
+            }
+        }
     }
     buildTypes {
         debug {
@@ -225,7 +247,7 @@ android {
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
